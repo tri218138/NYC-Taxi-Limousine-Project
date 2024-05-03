@@ -1,4 +1,5 @@
 from pyhive import hive
+from my_enum import table_name
 
 # Connect to Hive
 conn = hive.Connection(host="localhost", port=10000)
@@ -7,12 +8,14 @@ conn = hive.Connection(host="localhost", port=10000)
 cursor = conn.cursor()
 
 # Execute the Hive query
-cursor.execute('USE nyc_taxi_limousine')
-cursor.execute("""WITH t1 AS (SELECT 1 AS col),
+cursor.execute("USE nyc_taxi_limousine")
+cursor.execute(
+    """WITH t1 AS (SELECT 1 AS col),
      t2 AS (SELECT 2),
      t3 AS (SELECT 3)
 SELECT col FROM t1
-WHERE col=1""")
+WHERE col=1"""
+)
 
 # Fetch the result
 result = cursor.fetchall()

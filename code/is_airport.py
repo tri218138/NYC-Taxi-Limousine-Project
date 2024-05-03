@@ -1,5 +1,6 @@
 from pyhive import hive
 
+assert 1 == 2, "The function is not executable at the present time"
 # Connect to Hive
 conn = hive.Connection(host="localhost", port=10000)
 
@@ -7,8 +8,9 @@ conn = hive.Connection(host="localhost", port=10000)
 cursor = conn.cursor()
 
 # Execute the Hive query
-cursor.execute('USE nyc_taxi_limousine')
-cursor.execute('''
+cursor.execute("USE nyc_taxi_limousine")
+cursor.execute(
+    """
 WITH LocationIDsAirportFee AS (
     SELECT PULocationID AS LocationID, Airport_fee
     FROM yellow_tripdata_2022_01
@@ -60,14 +62,15 @@ SELECT DISTINCT LocationID,
         WHEN LocationID IN (SELECT LocationID FROM MaybeOneLocationIDs) THEN -1
     END AS IsAirPort
 FROM LocationIDs
-''')
+"""
+)
 
 # Fetch the result
 results = cursor.fetchall()
 print(results)
 # Print the result
-#print("Total revenue by day in January 2022:")
-#for row in results:
+# print("Total revenue by day in January 2022:")
+# for row in results:
 #    print(f"Date {row[0]}: {row[1]}")
 
 # Close the cursor and connection

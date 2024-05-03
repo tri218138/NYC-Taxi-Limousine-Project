@@ -1,7 +1,7 @@
+from my_enum import table_name
 import pandas as pd
 from pyhive import hive
 
-table_name = "yellow_tripdata_2022_01"
 bin_size = 5
 
 # Connect to Hive
@@ -11,8 +11,9 @@ conn = hive.Connection(host="localhost", port=10000)
 cursor = conn.cursor()
 
 # Execute the Hive query
-cursor.execute('USE nyc_taxi_limousine')
-cursor.execute("""
+cursor.execute("USE nyc_taxi_limousine")
+cursor.execute(
+    """
 SELECT
     PULocationID,
     DOLocationID,
@@ -26,7 +27,10 @@ GROUP BY
     PULocationID,
     DOLocationID
 ORDER BY
-    total_congestion_surcharge DESC""".format(table_name=table_name))
+    total_congestion_surcharge DESC""".format(
+        table_name=table_name
+    )
+)
 
 # Fetch the result
 result = cursor.fetchall()
@@ -35,5 +39,8 @@ result = cursor.fetchall()
 cursor.close()
 conn.close()
 
-df = pd.DataFrame(result, columns=["PULocationID", "DOLocationID", "Count", "TotalCongestionSurcharge"])
+df = pd.DataFrame(
+    result,
+    columns=["PULocationID", "DOLocationID", "Count", "TotalCongestionSurcharge"],
+)
 print(df)
