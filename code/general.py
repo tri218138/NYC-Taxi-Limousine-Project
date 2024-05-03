@@ -18,6 +18,8 @@ def load_tokenizer_and_model():
     model = model.to(device)
     model.eval()
 
+    return tokenizer, model
+
 
 def generate_sql(tokenizer, model, input_prompt):
     # Tokenize the input prompt
@@ -53,7 +55,7 @@ def execute_commands(cursor, commands: list = None):
     return results
 
 
-def question_to_query(question):
+def question_to_query(tokenizer, model, question):
     input_prompt = (
         "tables:\n"
         + f"""CREATE EXTERNAL TABLE {table_name} (
@@ -82,7 +84,7 @@ def question_to_query(question):
         + question
     )
 
-    generated_sql = generate_sql(input_prompt)
+    generated_sql = generate_sql(tokenizer, model, input_prompt)
 
     print(f"The generated SQL query is: {generated_sql}")
     return generated_sql
@@ -94,7 +96,8 @@ def visualize_result(results):
 
 def main():
     cursor, conn = hive_connection()
-    query = question_to_query(question)
+    tokenizer, model = load_tokenizer_and_model()
+    query = question_to_query(tokenizer, model, question)
     results = execute_commands(cursor, [query])
     cursor.close()
     conn.close()
